@@ -5,4 +5,12 @@
 		  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
            version="2.5">
 
+    <servlet>
+        <servlet-name>ConsumerServlet</servlet-name>
+        <servlet-class>glim.antony.ConsumerServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ConsumerServlet</servlet-name>
+        <url-pattern>/consumer-servlet</url-pattern>
+    </servlet-mapping>
 </web-app>
