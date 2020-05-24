@@ -1,21 +1,67 @@
 package glim.antony;
 
+import glim.antony.dto.Message;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Logger;
 
 public class ConsumerServlet extends HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+    private final Logger log = Logger.getLogger(ConsumerServlet.class.getName());
+    private List<Message> messages = new ArrayList<Message>();
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PrintWriter pw = response.getWriter();
         pw.println("<html>");
         pw.println("<h1>Hello Consumer!</h1>");
+
+
+        List<Message> messages = new ArrayList<Message>();
+        for (int i = 0; i < 10; i++) {
+            messages.add(new Message(Long.valueOf(i), i + "", new Date()));
+        }
+        for (Message message : messages) {
+            pw.println("<p>" + message + "</p>");
+        }
+
         pw.println("</html>");
+
+
+        String xml = "" /* = receiveMessageFromJmsQueue()*/;
+        Message message = unmarshallMessageFromXml(xml);
+        //addMessageToList(message);
+        //printMessagesOnPage(messages);
+    }
+
+    private Message unmarshallMessageFromXml(String xml) {
+        Message message = null;
+        StringReader reader = new StringReader(xml);
+        try {
+            JAXBContext context = JAXBContext.newInstance(Message.class);
+            Unmarshaller unmarshaller = context.createUnmarshaller();
+            message = (Message) unmarshaller.unmarshal(reader);
+        } catch (JAXBException e) {
+            log.warning("Exception cause message: " + e.getCause().getMessage());
+            log.warning("Exception message: " + e.getMessage());
+        } finally {
+            reader.close();
+        }
+        log.info(" [i] message: " + (message == null ? null : message.toString()));
+        return message;
     }
 }
