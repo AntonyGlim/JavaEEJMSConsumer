@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -26,26 +26,11 @@ public class ConsumerServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        PrintWriter pw = response.getWriter();
-        pw.println("<html>");
-        pw.println("<h1>Hello Consumer!</h1>");
-
-
-        List<Message> messages = new ArrayList<Message>();
-        for (int i = 0; i < 10; i++) {
-            messages.add(new Message(Long.valueOf(i), i + "", new Date()));
-        }
-        for (Message message : messages) {
-            pw.println("<p>" + message + "</p>");
-        }
-
-        pw.println("</html>");
-
-
         String xml = "" /* = receiveMessageFromJmsQueue()*/;
         Message message = unmarshallMessageFromXml(xml);
-        //addMessageToList(message);
-        //printMessagesOnPage(messages);
+        messages.add(message);
+        messagesSortByDate(messages);
+        printMessagesOnPage(response.getWriter());
     }
 
     private Message unmarshallMessageFromXml(String xml) {
@@ -63,5 +48,18 @@ public class ConsumerServlet extends HttpServlet {
         }
         log.info(" [i] message: " + (message == null ? null : message.toString()));
         return message;
+    }
+
+    private void messagesSortByDate(List<Message> messages){
+        Collections.sort(messages);
+    }
+
+    private void printMessagesOnPage(PrintWriter pw){
+        pw.println("<html>");
+        pw.println("<h1>Hello Consumer!</h1>");
+        for (Message message : messages) {
+            pw.println("<p>" + message + "</p>");
+        }
+        pw.println("</html>");
     }
 }
