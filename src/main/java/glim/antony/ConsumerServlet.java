@@ -69,10 +69,26 @@ public class ConsumerServlet extends HttpServlet {
 
     private void printMessagesOnPage(PrintWriter pw){
         pw.println("<html>");
-        pw.println("<h1>Hello Consumer!</h1>");
+        pw.println("<table>\n" +
+                "    <thead>\n" +
+                "    <tr>\n" +
+                "        <th>number</th>\n" +
+                "        <th>text</th>\n" +
+                "        <th>date</th>\n" +
+                "    </tr>\n" +
+                "    </thead>\n" +
+                "    <tbody>\n");
+
         for (Message message : messages) {
-            pw.println("<p>" + message + "</p>");
+            pw.println("    <tr>\n");
+            pw.println("        <td>"+ message.getInputNumber() + "</td>\n");
+            pw.println("        <td>"+ message.getInputText() + "</td>\n");
+            pw.println("        <td>"+ message.getInputDate() + "</td>\n");
+            pw.println("    </tr>\n");
+
         }
+        pw.println("    </tbody>\n" +
+                "</table>");
         pw.println("</html>");
     }
 }
