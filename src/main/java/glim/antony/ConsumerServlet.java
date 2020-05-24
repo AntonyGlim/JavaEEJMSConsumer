@@ -2,6 +2,7 @@ package glim.antony;
 
 import glim.antony.dto.Message;
 
+import javax.jms.JMSException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -26,11 +27,23 @@ public class ConsumerServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String xml = "" /* = receiveMessageFromJmsQueue()*/;
+        String xml = receiveMessageFromJmsQueue();
         Message message = unmarshallMessageFromXml(xml);
-        messages.add(message);
-        messagesSortByDate(messages);
+        if (message != null){
+            messages.add(message);
+            messagesSortByDate(messages);
+        }
         printMessagesOnPage(response.getWriter());
+    }
+
+    private String receiveMessageFromJmsQueue() {
+        String xml = null;
+        try {
+            xml = MessageReceiver.receive();
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+        return xml;
     }
 
     private Message unmarshallMessageFromXml(String xml) {

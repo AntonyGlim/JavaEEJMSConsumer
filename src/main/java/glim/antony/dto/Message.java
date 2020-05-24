@@ -24,6 +24,9 @@ public class Message implements Serializable, Comparable<Message> {
     }
 
     public int compareTo(Message message) {
+        if (this.inputDate == null && message.inputDate == null) return 0;
+        if (this.inputDate == null) return -1;
+        if (message.inputDate == null) return 1;
         return this.inputDate.compareTo(message.getInputDate());
     }
 
